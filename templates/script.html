@@ -1,0 +1,14 @@
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Find all elements with the class 'favor_marker'
+        var favorMarkers = document.querySelectorAll('.login');
+
+        // Add a click event listener to each favor marker
+        favorMarkers.forEach(function (marker) {
+            marker.addEventListener("click", function () {
+                // When favor marker clicked, show an alert
+                alert("Login / Signup to enjoy this feature");
+            });
+        });
+    });
+</script>

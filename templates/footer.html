@@ -1,0 +1,136 @@
+<div class=" {% if request.user.is_authenticated %}hidden{% else %}footer_signin_contianer{% endif %}">
+
+    <div class="footer_signin_sub_contianer">
+        <div>
+            <h4>To see personalized recommendations</h4>
+        </div>
+        <div>
+            <button onclick="window.location.href = '{% url 'Login page' %}'">Sign in</button>
+        </div>
+        <div>
+            <h4>New customer?</h4><a href="{% url 'Signup page' %}"> Start here. </a>
+        </div>
+    </div>
+
+</div>
+
+<div class="footer_back_to_top">
+
+    <button id="backToTopBtn">
+        Back to top
+    </button>
+
+</div>
+
+<footer>
+
+    <div class="footer_container">
+        <div class="footer_container_1">
+            <a href="{% url 'Home' %}">
+                <h1>
+                    {{ logo.name }}
+                </h1>
+            </a>
+
+        </div>
+        <div class="footer_container_2">
+            <h2>
+                Support
+            </h2>
+
+            <h4>
+                No. CA17, 36th Cross, 26th Main, Jayanagar 4th T Block, Bangalore - 560041 </h4>
+            <h4>
+                exclusive@gmail.com
+            </h4>
+            <h4>
+                +88015-88888-9999
+            </h4>
+
+        </div>
+        <div class="footer_container_3">
+            <h2>
+                Account
+            </h2>
+
+            <a href="{% url 'My Account' %}">
+                My Account
+            </a>
+            <a href="">
+                Login / Register
+            </a>
+
+            <h2>
+                Merchant
+            </h2>
+
+            <a href="{% url 'Merchant Signup page' %}">
+                Register As Merchant 
+            </a>
+            <a href="{% url 'Merchant Login page' %}">
+                Login As Merchant
+            </a>
+        </div>
+        <div class="footer_container_4">
+
+            <h2>
+                Quick Link
+            </h2>
+
+            <a href="">
+                Privacy Policy
+            </a>
+
+            <a href="">
+                Terms Of Use
+            </a>
+
+            <a href="">
+                FAQ
+            </a>
+            <a href="">
+                Contact
+
+            </a>
+
+        </div>
+    </div>
+    <div class="footer_bottom_container">
+
+        <h1>
+            <i class="fa-regular fa-copyright"></i>
+            Exclusive Copyright 2022. All right reserved
+        </h1>
+
+
+        <div class="social_media">
+            {% for link in social_media_links %}
+            <a href="{{ link.url }}">
+                {% if link.platform == "instagram" %}
+                <i class="fab fa-instagram"></i>
+                {% elif link.platform == "facebook" %}
+                <i class="fab fa-facebook"></i>
+                {% elif link.platform == "twitter" %}
+                <i class="fab fa-twitter"></i>
+                {% endif %}
+            </a>
+            {% endfor %}
+        </div>
+
+    </div>
+
+</footer>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var scrollUpButton = document.getElementById("backToTopBtn");
+
+        // Scroll to the top when the scrollUpButton is clicked
+        scrollUpButton.addEventListener("click", function () {
+            window.scrollTo({
+                top: 0, // Scroll to the top of the page
+                behavior: "smooth", // Smooth scroll behavior
+            });
+        });
+    });
+</script>

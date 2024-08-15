@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% include 'links.html' %}
+    <link rel="stylesheet" href="/static/css/merchant.css">
+    <title>Edit Product | {{ product.product_name }}</title>
+</head>
+
+<body>
+    {% include 'Merchant/merchant_header.html' %}
+
+    <div class="create_product_container">
+        <h1>Edit Your Product</h1>
+        <form method="post" action="{% url 'edit_product' product.id product.product_name %}"
+            enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="merchant_name_img_container">
+                <div class="merchant_name_container">
+                    <h1>Welcome {{ request.user.username }}</h1>
+                    <h5>Start your selling journey on {{ logo.name }} and become a part of our 14 Lakh+ seller community
+                    </h5>
+                    <div class="category_subcategory_container">
+                        <div class="form-group category_container">
+                            <label for="{{ form.category.id_for_label }}">{{ form.category.label }}</label>
+                            <div class="custom-select-container">
+                                {{ form.category }}
+                            </div>
+                        </div>
+                        <div class="form-group subcategory_container">
+                            <label for="{{ form.sub_category.id_for_label }}">{{ form.sub_category.label }}</label>
+                            <div class="custom-select-container">
+                                {{ form.sub_category }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- database img -->
+                <div style="display: flex;align-items: center;justify-content: center;flex-direction: column;height: 100%;">
+                    <div class="upload-container" style="margin: 10px;">
+                        <img class="" src="{{ product.product_image.url }}" alt="">
+                    </div>
+                    <h4 style="margin: 0;">Current Image</h4>
+                </div>
+
+                <div class="form-group product_image">
+                    <label for="{{ form.product_image.id_for_label }}" class="custom-file-upload">
+                        <div class="upload-container">
+
+                            {% if product.product_image %}
+                            <img id="current-image" class="uploaded-image" src="{{ product.product_image.url }}"
+                                alt="Current Image">
+                            {% else %}
+                            <span id="no-image-text">No image uploaded</span>
+                            {% endif %}
+                        </div>
+
+                    </label>
+                    <!-- Provide an option to change the image -->
+                    <input type="file" style="display: none;" id="{{ form.product_image.id_for_label }}"
+                        name="{{ form.product_image.name }}" onchange="showNewImage(this)">
+                    <button type="button" class="changebtn"
+                        onclick="document.getElementById('{{ form.product_image.id_for_label }}').click()">
+                        Change
+                    </button>
+                </div>
+
+
+            </div>
+
+            <div class="details-container">
+                <h2>Details</h2>
+                <div class="form-row">
+                    <div class="form-group form_group">
+                        <label for="{{ form.product_name.id_for_label }}">{{ form.product_name.label }}</label>
+                        {{ form.product_name }}
+                    </div>
+                    <div class="form-group form_group">
+                        <label for="{{ form.brand.id_for_label }}">{{ form.brand.label }}</label>
+                        {{ form.brand }}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group form_group">
+                        <label for="{{ form.product_price.id_for_label }}">{{ form.product_price.label }}</label>
+                        {{ form.product_price }}
+                    </div>
+                    <div class="form-group form_group">
+                        <label
+                            for="{{ form.product_discount_price.id_for_label }}">{{form.product_discount_price.label}}</label>
+                        {{ form.product_discount_price }}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group form_group" style="width: 100%;">
+                        <label
+                            for="{{ form.product_description.id_for_label }}">{{form.product_description.label}}</label>
+                        {{ form.product_description }}
+                    </div>
+                </div>
+
+            </div>
+
+            <input type="hidden" name="MerchantName" value="{{ request.user.username }}">
+
+            <div class="stock_delivery_container">
+                <div class="form-group groups">
+                    <label for="{{ form.in_stock.id_for_label }}">{{ form.in_stock.label }}</label>
+                    {{ form.in_stock }}
+                </div>
+
+                <div class="form-group groups">
+                    <label for="{{ form.free_delivery.id_for_label }}">{{ form.free_delivery.label }}</label>
+                    {{ form.free_delivery }}
+                </div>
+
+                <div class="form-group groups">
+                    <label for="{{ form.return_delivery.id_for_label }}">{{ form.return_delivery.label }}</label>
+                    {{ form.return_delivery }}
+                </div>
+            </div>
+
+            <button type="submit" class="uploadproduct">Save Changes</button>
+        </form>
+    </div>
+
+    {% include 'footer.html' %}
+
+    <script>
+        function showNewImage(input) {
+            const file = input.files[0];
+            const currentImage = document.getElementById("current-image");
+            const noImageText = document.getElementById("no-image-text");
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    currentImage.src = e.target.result;
+                    currentImage.style.display = 'block';
+                    noImageText.style.display = 'none';
+                }
+                reader.readAsDataURL(file);
+            } else {
+                currentImage.src = "";
+                currentImage.style.display = 'none';
+                noImageText.style.display = 'block';
+            }
+        }
+    </script>
+
+</body>
+
+</html>

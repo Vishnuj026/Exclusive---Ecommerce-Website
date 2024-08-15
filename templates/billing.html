@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% include 'links.html' %}
+    <title>{{ logo.name }} | {{ product.product_name }}</title>
+    <link rel="stylesheet" href="/static/css/billing.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .paymentModal_frame form {
+            display: none;
+        }
+
+        .paymentModal_frame form.active {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    {% include 'header.html' %}
+
+    <form method="post" action="{% url 'billing' %}" enctype="multipart/form-data" class="billing_main_container"
+        id="billing_form">
+        {% csrf_token %}
+
+        <div class="billing_form">
+            <h2>Billing Details</h2>
+            <input type="hidden" name="product_id" value="{{ product.id }}">
+            <input type="text" name="username" placeholder="Name" value="{{ billing_info.user|default:'' }}" required>
+            <input type="text" name="address" placeholder="Address" value="{{ billing_info.address|default:'' }}"
+                required>
+            <input type="text" name="city" placeholder="Town/City" value="{{ billing_info.city|default:'' }}" required>
+            <input type="text" name="phone_number" placeholder="Phone Number"
+                value="{{ billing_info.phone_number|default:'' }}" required>
+            <input type="email" name="email_address" placeholder="Email Address"
+                value="{{ billing_info.email_address|default:'' }}" required>
+            <div class="checkbox_container">
+                <input type="checkbox" id="save_info" name="save_info">
+                <label for="save_info">Save this information for faster check-out next time</label>
+            </div>
+        </div>
+
+        <div class="billing_summary">
+            <h3>Summary</h3>
+            <div class="product">
+                <img src="{{ product.product_image.url }}" alt="{{ product.product_name }}">
+                <span class="product-name">{{ product.product_name }}</span>
+                <div class="counter-container">
+                    <button id="decrement">-</button>
+                    <div id="counter_display">{{ quantity }}</div>
+                    <button id="increment">+</button>
+                </div>
+                <input id="quantity_input" type="hidden" value="{{ quantity }}" name="quantity">
+
+                <span>
+                    {% if product.product_discount_price %}
+                    {{ product.product_discount_price }}
+                    <input id="product.product_discount_price" type="hidden"
+                        value="{{ product.product_discount_price }}" name="product_price">
+                    {% else %}
+                    {{ product.product_price }}
+                    <input id="product.product_price" type="hidden" value="{{ product.product_price }}"
+                        name="product_price">
+                    {% endif %}
+                </span>
+            </div>
+            <div class="subtotal">
+                <span>Subtotal:</span>
+                <span id="subtotal">{{ subtotal }}</span>
+            </div>
+            <div class="shipping">
+                <span>Shipping:</span>
+                <span id="shipping">{% if product.free_delivery %}Free{% else %}{{ shipping }}{% endif %}</span>
+            </div>
+            <div class="total">
+                <span>Total:</span>
+                <span id="total">{{ total_price }}</span>
+                <input type="hidden" value="{{ total_price }}" name="total_price" id="total_price_input">
+            </div>
+
+            <div class="coupon">
+                <input type="text" name="coupon_code" id="coupon_code" placeholder="Coupon Code">
+                <button class="applycoupon" type="button" id="apply_coupon">Apply Coupon</button>
+            </div>
+            <div id="coupon_error" style="color:red;margin: 5px 0;">{{ coupon_error }}</div>
+
+            <div class="payment-options">
+                <h4>Select Payment Mode:</h4>
+                <input type="radio" id="credit_card" name="payment_mode" value="credit-card-form" checked>
+                <label for="credit_card">Credit Card</label><br>
+                <input type="radio" id="debit_card" name="payment_mode" value="debit-card-form">
+                <label for="debit_card">Debit Card</label><br>
+                <input type="radio" id="upi" name="payment_mode" value="upi-form">
+                <label for="upi">UPI</label>
+            </div>
+
+            <button class="placeorder" type="button" id="place_order_button">Place Order</button>
+        </div>
+    </form>
+
+    <!-- Payment Modal -->
+    <div id="paymentModal" class="paymentModal hidden">
+        <button id="closeModal" class="closeModal">X</button>
+        <form id="credit-card-form" class="active">
+            <h2>Credit Card Payment</h2>
+            <input type="text" name="cc_number" placeholder="Card Number" required>
+            <input type="text" name="cc_expiry" placeholder="Expiry Date (MM/YY)" required>
+            <input type="text" name="cc_cvv" placeholder="CVV" required>
+        </form>
+        <form id="debit-card-form">
+            <h2>Debit Card Payment</h2>
+            <input type="text" name="dc_number" placeholder="Card Number" required>
+            <input type="text" name="dc_expiry" placeholder="Expiry Date (MM/YY)" required>
+            <input type="text" name="dc_cvv" placeholder="CVV" required>
+        </form>
+        <form id="upi-form">
+            <h2>UPI Payment</h2>
+            <input type="text" name="upi_id" placeholder="UPI ID" required>
+        </form>
+
+        <div class="payment_summary">
+            <span>Total: <span id="payment_total">{{ total_price }}</span></span>
+            <button class="paynow" type="submit">Pay Now</button>
+            <!-- Hidden input field to store total price -->
+            <input type="hidden" value="{{ total_price }}" name="payment_total" id="payment_total_input">
+        </div>
+    </div>
+
+    {% include 'footer.html' %}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const decrementButton = document.getElementById('decrement');
+            const incrementButton = document.getElementById('increment');
+            const counterDisplay = document.getElementById('counter_display');
+            const quantityInput = document.getElementById('quantity_input'); // Get the hidden input field for quantity
+            const subtotalElem = document.getElementById('subtotal');
+            const totalElem = document.getElementById('total');
+            const totalPriceInput = document.getElementById('total_price_input'); // Get the hidden input field for total price
+            const paymentTotalInput = document.getElementById('payment_total_input'); // Hidden input for payment modal
+            const shippingElem = document.getElementById('shipping');
+            const placeOrderButton = document.getElementById('place_order_button');
+            const paymentModal = document.getElementById('paymentModal');
+            const closeModal = document.getElementById('closeModal');
+            const paymentOptions = document.querySelectorAll('.payment-options input[name="payment_mode"]');
+            let quantity = parseInt(counterDisplay.textContent);
+            let productPrice = parseFloat("{{ product.product_discount_price|default:product.product_price }}");
+            let freeDelivery = "{{ product.free_delivery|yesno:'true,false' }}" === "true";
+            let shipping = freeDelivery ? 0 : (productPrice < 1000 ? 0.1 * productPrice : 0.3 * productPrice);
+            let couponApplied = false; // Flag to check if coupon is applied
+
+            function updateSummary() {
+                let subtotal = productPrice * quantity;
+                subtotalElem.textContent = subtotal.toFixed(2);
+                shipping = freeDelivery ? 0 : (subtotal < 1000 ? 0.1 * subtotal : 0.3 * subtotal);
+                shippingElem.textContent = freeDelivery ? 'Free' : `${shipping.toFixed(2)}`;
+                let total = (subtotal + shipping).toFixed(2);
+                totalElem.textContent = total;
+                totalPriceInput.value = total; // Update hidden input field for total_price
+                paymentTotalInput.value = total; // Update hidden input field in payment modal
+                // Update payment modal total
+                document.getElementById('payment_total').textContent = total;
+            }
+
+            decrementButton.addEventListener('click', function (event) {
+                event.preventDefault(); // Prevent form submission
+                if (quantity > 1) {
+                    quantity--;
+                    counterDisplay.textContent = quantity;
+                    quantityInput.value = quantity; // Update the hidden input field value
+                    updateSummary(); // Update the summary
+                }
+            });
+
+            incrementButton.addEventListener('click', function (event) {
+                event.preventDefault(); // Prevent form submission
+                quantity++;
+                counterDisplay.textContent = quantity;
+                quantityInput.value = quantity; // Update the hidden input field value
+                updateSummary(); // Update the summary
+            });
+
+            document.getElementById('apply_coupon').addEventListener('click', function () {
+                if (couponApplied) {
+                    document.getElementById('coupon_error').textContent = 'Coupon has already been applied.';
+                    return;
+                }
+
+                const couponCode = document.getElementById('coupon_code').value.trim();
+                fetch('{% url "apply_coupon" %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}',
+                    },
+                    body: JSON.stringify({ coupon_code: couponCode }),
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            const discountAmount = parseFloat(data.discount_amount);
+                            let total = parseFloat(totalElem.textContent) - discountAmount;
+                            // Ensure total doesn't go below zero
+                            total = total < 0 ? 0 : total;
+                            totalElem.textContent = total.toFixed(2);
+
+                            // Update hidden input fields for total_price
+                            totalPriceInput.value = total.toFixed(2);
+                            paymentTotalInput.value = total.toFixed(2);
+
+                            // Update payment_total in payment_summary
+                            document.getElementById('payment_total').textContent = total.toFixed(2);
+
+                            document.getElementById('coupon_error').textContent = '';
+                            couponApplied = true; // Set the flag to true
+                        } else {
+                            document.getElementById('coupon_error').textContent = data.error;
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            });
+
+            placeOrderButton.addEventListener('click', function () {
+                const selectedPaymentMode = document.querySelector('.payment-options input[name="payment_mode"]:checked').value;
+                const forms = document.querySelectorAll('.paymentModal form');
+                forms.forEach(form => {
+                    form.classList.remove('active');
+                    if (form.id === selectedPaymentMode) {
+                        form.classList.add('active');
+                    }
+                });
+                paymentModal.classList.remove('hidden');
+                // Update payment modal total
+                document.getElementById('payment_total').textContent = totalElem.textContent;
+                paymentTotalInput.value = totalElem.textContent; // Update hidden input field in payment modal
+            });
+
+            closeModal.addEventListener('click', function () {
+                paymentModal.classList.add('hidden');
+            });
+
+            updateSummary(); // Initial summary update
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Other JavaScript code
+
+            const billingForm = document.getElementById('billing_form');
+            const payNowButton = document.querySelector('.paynow');
+
+            payNowButton.addEventListener('click', function () {
+                // Submit the billing form when the "Pay Now" button is clicked
+                billingForm.submit();
+            });
+        });
+    </script>
+
+</body>
+
+</html>

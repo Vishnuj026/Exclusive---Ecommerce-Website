@@ -1,0 +1,72 @@
+body {
+    background-color: #9600BE;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    font-family: "Poppins";
+}
+
+.header_signin_contianer, nav, .footer_signin_contianer {
+    display: none;
+}
+
+.merchant_product_lists {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: 100%;
+    min-height: 50vh;
+    height: auto;
+    margin: 2% 0;
+}
+
+.Inventory {
+    width: 90%;
+    font-weight: 500;
+    color: #FFFFFF;
+}
+
+.merchant_product_lists_container {
+    width: 90%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+
+
+
+.merchant_product_card {
+    flex: 0 0 calc(20% - 20px);
+    margin: 20px 0;
+    text-decoration: none;
+    cursor: pointer;
+    background: #00000045;
+    color: #FFFFFF;
+    min-height: 300px;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+
+.merchant_product_card_img {
+    position: relative;
+    background-color: #F5F5F5;
+    border-radius: 5px;
+    width: 100%;
+    height: 70%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+}
+
+
+.merchant_product_card_img img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}

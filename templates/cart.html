@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% include 'links.html' %}
+    <title>{{ logo.name }} | Your Cart</title>
+    <link rel="stylesheet" href="/static/css/cart.css">
+    <style>
+        body {
+            background-color: #FFFFFF;
+            margin: 0;
+            padding: 0;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .paymentModal_frame form {
+            display: none;
+        }
+
+        .paymentModal_frame form.active {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    {% include 'header.html' %}
+
+    <div class="cart_main_container">
+        <div class="cart_list_container">
+            <table class="cart_table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in cart_items %}
+                    <tr data-item-id="{{ item.id }}">
+                        <td>
+                            <div class="product_details">
+                                <div class="cart_img_container">
+                                    <img src="{{ item.product.product_image.url }}"
+                                        alt="{{ item.product.product_name }}">
+                                </div>
+                                {{ item.product.product_name }}
+                            </div>
+                        </td>
+                        <td class="price">{{ item.price }}</td>
+                        <td>
+                            <div class="cart_quantity">
+                                <button onclick="updateQuantity('{{ item.id }}', -1, {{ item.price }})">-</button>
+                                <input id="quantity_{{ item.id }}" class="quantity_input" type="text"
+                                    value="{{ item.quantity }}" readonly>
+                                <button onclick="updateQuantity('{{ item.id }}', 1, {{ item.price }})">+</button>
+                            </div>
+                        </td>
+                        <td class="subtotal">{{ item.subtotal }}</td>
+                    </tr>
+                    {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+        <div class="coupon_carttotal_container">
+            <div class="coupon_container">
+                <input type="text" name="coupon_code" id="coupon_code" placeholder="Coupon Code">
+                <button class="applycoupon" type="button" id="apply_coupon">Apply Coupon</button>
+                <div id="coupon_error" style="color:red;margin: 5px 0;">{{ coupon_error }}</div>
+            </div>
+
+            <div class="carttotal_container">
+                <h2>Cart Total</h2>
+                <div class="totals">
+                    <span>Subtotal:</span>
+                    <span class="subtotal_value">{{ total_price }}</span>
+                </div>
+                <div class="totals">
+                    <span>Shipping:</span>
+                    <span id="shipping_value">Free</span>
+                </div>
+                <div class="totals hidden" id="coupon_discount_container">
+                    <span>Coupon Discount:</span>
+                    <span id="coupon_discount_value">0</span>
+                </div>
+                <div class="totals">
+                    <span>Total:</span>
+                    <span class="total_value">{{ total_price }}</span>
+                </div>
+                <div class="payment-options">
+                    <h4>Select Payment Mode:</h4>
+                    <div class="Payment_mode_div">
+                        <input type="radio" id="credit_card" name="payment_mode" value="credit-card-form" checked>
+                        <label for="credit_card">Credit Card</label><br>
+                    </div>
+                    <div class="Payment_mode_div">
+                        <input type="radio" id="debit_card" name="payment_mode" value="debit-card-form">
+                        <label for="debit_card">Debit Card</label><br>
+                    </div>
+                    <div class="Payment_mode_div">
+                        <input type="radio" id="upi" name="payment_mode" value="upi-form">
+                        <label for="upi">UPI</label>
+                    </div>
+                </div>
+                <button id="proceed_to_checkout_btn">Proceed to checkout</button>
+            </div>
+            <!-- Payment Modal -->
+            <div id="paymentModal" class="paymentModal hidden">
+                <button id="closeModal" class="closeModal">X</button>
+                <form id="credit-card-form" class="active">
+                    <h2>Credit Card Payment</h2>
+                    <input type="text" name="cc_number" placeholder="Card Number" required>
+                    <input type="text" name="cc_expiry" placeholder="Expiry Date (MM/YY)" required>
+                    <input type="text" name="cc_cvv" placeholder="CVV" required>
+                </form>
+                <form id="debit-card-form">
+                    <h2>Debit Card Payment</h2>
+                    <input type="text" name="dc_number" placeholder="Card Number" required>
+                    <input type="text" name="dc_expiry" placeholder="Expiry Date (MM/YY)" required>
+                    <input type="text" name="dc_cvv" placeholder="CVV" required>
+                </form>
+                <form id="upi-form">
+                    <h2>UPI Payment</h2>
+                    <input type="text" name="upi_id" placeholder="UPI ID" required>
+                </form>
+
+                <div class="payment_summary">
+                    <span>Total: <span id="payment_total">{{ total_price }}</span></span>
+                    <!-- Inside cart.html -->
+                    <form id="checkout_form" style="display: flex;" action="{% url 'proceed_to_checkout' %}"
+                        method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="payment_method" id="payment_method_input">
+                        <input type="hidden" value="{{ total_price }}" name="total_value" id="total_amount">
+                        <button id="proceed_to_checkout_btn" class="paynow" type="submit">Proceed to checkout</button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% include 'footer.html' %}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+
+
+
+            const paymentOptions = document.querySelectorAll('input[name="payment_mode"]');
+            paymentOptions.forEach(option => {
+                option.addEventListener('change', () => {
+                    const selectedOption = document.querySelector('input[name="payment_mode"]:checked').value;
+                    const paymentForms = document.querySelectorAll('#paymentModal form');
+                    paymentForms.forEach(form => {
+                        if (form.id === selectedOption) {
+                            form.classList.add('active');
+                        } else {
+                            form.classList.remove('active');
+                        }
+                    });
+                });
+            });
+
+
+
+
+            const closeModalButton = document.getElementById('closeModal');
+            closeModalButton.addEventListener('click', () => {
+                const paymentModal = document.querySelector('.paymentModal');
+                paymentModal.classList.add('hidden');
+            });
+
+
+
+
+            // Update 'Pay Now' button click event to set payment and shipping method
+            const checkoutForm = document.getElementById('checkout_form');
+            checkoutForm.addEventListener('submit', (event) => {
+                event.preventDefault();
+                const selectedPaymentMode = document.querySelector('input[name="payment_mode"]:checked').value;
+
+                // Get the total price
+                const totalAmount = parseFloat(document.getElementById('total_amount').value);
+
+                // Set values in hidden inputs
+                document.getElementById('payment_method_input').value = selectedPaymentMode;
+                document.getElementById('total_amount').value = totalAmount.toFixed(2); // Convert total to string
+
+                // Submit the form
+                checkoutForm.submit();
+            });
+
+
+
+
+
+        });
+
+        // JavaScript for cart functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            let couponApplied = false;
+            const couponDiscountElem = document.getElementById('coupon_discount_value');
+            const couponDiscountContainer = document.getElementById('coupon_discount_container');
+            const totalElem = document.querySelector('.total_value');
+            const paymentTotalElem = document.getElementById('payment_total');
+            const totalAmountElem = document.getElementById('total_amount');
+
+            // Function to update cart totals
+            function updateCartTotals() {
+                let subtotal = 0;
+                const subtotalElements = document.querySelectorAll('.subtotal');
+                subtotalElements.forEach(element => {
+                    subtotal += parseFloat(element.textContent);
+                });
+
+                // Calculate shipping as 10% of subtotal
+                const shipping = subtotal * 0.1;
+
+                // Display subtotal without decimal
+                const subtotalValueElement = document.querySelector('.subtotal_value');
+                subtotalValueElement.textContent = subtotal.toFixed(2);
+
+                // Display shipping cost without decimal
+                const shippingElement = document.querySelector('#shipping_value');
+                shippingElement.textContent = shipping.toFixed(2);
+
+                // Update total
+                const totalValue = subtotal + shipping;
+                const totalValueElement = document.querySelector('.total_value');
+                totalValueElement.textContent = totalValue.toFixed(2); // Display total without decimal
+            }
+
+            // Initial call to update cart totals when page loads
+            updateCartTotals();
+
+            // Event listeners for quantity update buttons
+            const quantityUpdateButtons = document.querySelectorAll('.cart_quantity button');
+            quantityUpdateButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const itemId = button.closest('tr').getAttribute('data-item-id');
+                    const price = parseFloat(button.closest('tr').querySelector('.price').textContent);
+                    const quantityInput = button.closest('tr').querySelector('.quantity_input');
+                    let currentQuantity = parseInt(quantityInput.value);
+
+                    if (button.textContent === '-' && currentQuantity > 1) {
+                        currentQuantity--;
+                    } else if (button.textContent === '+') {
+                        currentQuantity++;
+                    }
+
+                    quantityInput.value = currentQuantity;
+
+                    const subtotalCell = button.closest('tr').querySelector('.subtotal');
+                    subtotalCell.textContent = (currentQuantity * price).toFixed(2);
+
+                    updateCartTotals(); // Update cart totals after changing quantity
+                });
+            });
+
+            // Apply coupon function
+            document.getElementById('apply_coupon').addEventListener('click', function () {
+                if (couponApplied) {
+                    document.getElementById('coupon_error').textContent = 'Coupon has already been applied.';
+                    return;
+                }
+
+                const couponCode = document.getElementById('coupon_code').value.trim();
+                fetch('{% url "apply_coupon" %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}',
+                    },
+                    body: JSON.stringify({ coupon_code: couponCode }),
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            couponApplied = true; // Set the flag to true
+                            const discountAmount = parseFloat(data.discount_amount);
+                            let total = parseFloat(totalElem.textContent) - discountAmount;
+                            // Ensure total doesn't go below zero
+                            total = total < 0 ? 0 : total;
+                            totalElem.textContent = total.toFixed(2);
+
+                            // Update hidden input fields for total_price
+                            paymentTotalElem.value = total.toFixed(2);
+                            totalAmountElem.value = total.toFixed(2);
+
+                            // Update coupon discount display
+                            couponDiscountElem.textContent = discountAmount.toFixed(2);
+                            couponDiscountContainer.classList.remove('hidden');
+
+                            // Update payment_total in payment_summary
+                            document.getElementById('payment_total').textContent = total.toFixed(2);
+                            document.getElementById('total_amount').textContent = total.toFixed(2);
+
+                            document.getElementById('coupon_error').textContent = '';
+                        } else {
+                            document.getElementById('coupon_error').textContent = data.error;
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            });
+
+            // Checkout button listener
+            const checkoutButton = document.getElementById('proceed_to_checkout_btn');
+            checkoutButton.addEventListener('click', () => {
+                // Check if there are items in the cart
+                const cartItems = document.querySelectorAll('.cart_table tbody tr');
+                if (cartItems.length === 0) {
+                    alert('Add products to the cart before proceeding to checkout.');
+                    return;
+                }
+
+                // Proceed to show the payment modal only if cart is not empty
+                const paymentModal = document.querySelector('.paymentModal');
+                paymentModal.classList.remove('hidden');
+
+                // Update total in payment modal
+                const totalValue = document.querySelector('.total_value').textContent;
+                document.getElementById('payment_total').textContent = totalValue;
+                document.getElementById('total_amount').value = totalValue;
+            });
+
+            // Close modal button listener
+            const closeModalButton = document.getElementById('closeModal');
+            closeModalButton.addEventListener('click', () => {
+                const paymentModal = document.querySelector('.paymentModal');
+                paymentModal.classList.add('hidden');
+            });
+
+        });
+
+    </script>
+</body>
+
+</html>

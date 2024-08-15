@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% include 'links.html' %}
+    <title>{{ logo.name }} | {{ category_name }}</title>
+    <style>
+        body {
+            background-color: #FFFFFF;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+
+<body>
+    {% include 'header.html' %}
+
+
+    {% include 'product_card.html' %}
+
+
+
+    {% include 'footer.html' %}
+
+</body>
+
+</html>

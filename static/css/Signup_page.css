@@ -1,0 +1,118 @@
+.Signup_page_main_container {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    flex-direction: row;
+    width: 100%;
+    height: auto;
+    max-height: auto;
+    font-family: "Poppins";
+}
+
+.Signup_page_sub_img_container {
+    width: 45%;
+    height: 90%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.Signup_page_sub_img_container img {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    object-fit: contain;
+}
+
+.Signup_page_sub_form_container {
+    width: 50%;
+    height: 90%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.Signup_form {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    flex-direction: column;
+    width: 65%;
+}
+
+.Signup_form h1,
+h5 {
+    margin: 5px;
+}
+
+
+.Signup_form input {
+    border: none;
+    color: #000000;
+    outline: none;
+    border-bottom: 2px solid #000000;
+    background-color: transparent;
+    width: 100%;
+    font-size: 20px;
+    padding: 5px 0 5px 5px;
+    margin: 10px 0;
+}
+
+
+
+.Create_account {
+    background-color: #9600BE;
+    color: #FFFFFF;
+    border: none;
+    font-weight: 800;
+}
+
+.Signup_form button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: Inter;
+    text-decoration: none;
+    font-size: 15px;
+    padding: 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    margin: 10px 0;
+}
+
+
+
+.Signup_form button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+
+.Log_In_Forget_Password_container a {
+    color: #9600BE;
+    font-weight: 800;
+}
+
+@media screen and (max-width: 768px) {
+
+    .Signup_page_sub_img_container {
+        display: none;
+    }
+
+    .Signup_page_sub_form_container {
+        width: 100%;
+    }
+
+    .Signup_form {
+        width: 90%;
+    }
+
+    .Signup_form h1 {
+        font-size: 30px;
+        line-height: 30px;
+    }
+}

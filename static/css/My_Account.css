@@ -1,0 +1,110 @@
+.My_Account_container {
+    display: flex;
+    max-width: 90%;
+    margin: 50px auto;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    flex-direction: row;
+}
+
+.image-section {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background-color: #e0f7fa;
+}
+
+.image-section-sub-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    width: 100%;
+    height: 100%;
+}
+
+.image-section img {
+    max-width: 100%;
+    height: 100;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.form-section {
+    flex: 1.5;
+    padding: 40px;
+}
+
+.form-section h2 {
+    margin-bottom: 20px;
+    color: #9c27b0;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input {
+    width: calc(100% - 10px);
+    padding: 8px 0 8px 8px ;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.form-group input:disabled {
+    background-color: #f5f5f5;
+}
+
+.button-group {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.cancel-button,
+.save-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.cancel-button {
+    background-color: #ccc;
+    color: white;
+    margin-right: 10px;
+}
+
+.save-button {
+    background-color: #9c27b0;
+    color: white;
+}
+
+.cancel-button:hover {
+    background-color: #b0b0b0;
+}
+
+.save-button:hover {
+    background-color: #7b1fa2;
+}
+
+
+@media screen and (max-width: 768px) {
+
+    .My_Account_container {
+        flex-direction: column;
+    }
+
+    .form-section {
+        padding: 20px;
+    }
+}

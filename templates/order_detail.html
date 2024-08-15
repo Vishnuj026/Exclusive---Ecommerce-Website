@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% include 'links.html' %}
+    <title>{{ logo.name }} | Order Details</title>
+    <link rel="stylesheet" href="/static/css/order-details.css">
+</head>
+
+<body>
+    {% include 'header.html' %}
+
+    <div class="order-detail-container">
+        <h2>Order Details</h2>
+        <div class="order-detail-card">
+            <div class="order-detail-image">
+                <img src="{{ order.product.product_image.url }}" alt="{{ order.product.product_name }}">
+            </div>
+            <div class="order-detail-info">
+                <p><strong>Product Name: </strong> {{ order.product.product_name }}</p>
+                <p><strong>Product Price: </strong>  {{ order.product.currency }} {{ order.product_price }}</p>
+                <p><strong>Quantity: </strong> {{ order.quantity }}</p>
+                <p><strong>Total Price: </strong>  {{ order.product.currency }} {{ order.total_price }}</p>
+                <p><strong>Payment Mode: </strong> {{ order.payment_mode }}</p>
+                <p><strong>Phone Number: </strong> {{ order.phone_number }}</p>
+                <p><strong>Email Address: </strong> {{ order.email_address }}</p>
+                <p><strong>Status: </strong> {{ order.status }}</p>
+                <p><strong>Address: </strong> {{ order.address }}</p>
+                <p><strong>City: </strong> {{ order.city }}</p>
+                <p><strong>Order Date: </strong> {{ order.created_at }}</p>
+            </div>
+        </div>
+    </div>
+
+    {% include 'footer.html' %}
+
+</body>
+
+</html>

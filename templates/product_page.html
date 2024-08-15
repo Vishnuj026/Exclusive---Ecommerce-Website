@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% include 'links.html' %}
+    <title>{{ logo.name }} | {{ product_details.product_name }}</title>
+    <link rel="stylesheet" href="/static/css/product_page.css">
+    <link rel="stylesheet" href="/static/css/product_card.css">
+</head>
+
+<body>
+    {% include 'header.html' %}
+
+
+    <div class="product_page_main_contianer">
+
+        <div class="product_page_sub_contianer_1">
+            <a href="{% url 'CategoryPage' product_details.category %}">{{ product_details.category }}</a>
+            /
+            <a
+                href="{% url 'SubCategoryPage' product_details.category product_details.sub_category %}">{{product_details.sub_category}}</a>
+            /
+            {{ product_details.product_name }}
+        </div>
+        <div class="product_page_sub_contianer_2">
+
+
+            <div class="product_page_sub_contianer_2_img">
+                <img src="{{ product_details.product_image.url }}" alt="{{ product_details.product_name }}">
+            </div>
+            <div class="product_page_sub_contianer_2_content">
+                <div class="product_page_sub_contianer_2_content_sub1">
+                    <h1>
+                        {{ product_details.product_name }}
+                    </h1>
+                    <div class="rating_stock_container">
+                        <div class="product_rating" style="width: 50%; padding: 0 5px; ">
+                            <div class="custom_rating">
+                                {% for i in "12345" %}
+                                {% if i|add:"-1" < product_details.product_rating %} 
+                                <label title="text" for="star{{ i }}" style="color: #ffa723;float: right;cursor: pointer;font-size: 22px;">&#9733;</label>
+                                    {% else %}
+                                <label title="text" for="star{{ i }}" style="color: #ffa723;float: right;cursor: pointer;font-size: 22px;">&#9734;</label>
+                                    {% endif %}
+                                    {% endfor %}
+                            </div>
+                            <h5 style="margin: 0 5px;">
+                                ( {{ product_review_count }} )
+                            </h5>
+
+                        </div>
+                        {% if product_details.in_stock %}
+                        <h3>In Stock</h3>
+                        {% else %}
+                        <h3 style="color: red;">Out of Stock</h3>
+                        {% endif %}
+                    </div>
+
+                    <!-- the below code css is in product_card.css -->
+                    <div class="product_price_contianer">
+                        {% if product_details.product_discount_price %}
+                        <h4 class="product_discount_price" style="margin: 2px;">
+                            {{ currency }} {{product_details.product_discount_price}}</h4>
+                        {% else %}
+                        <h4 class="product_discount_price" style="margin: 2px;">{{ currency }} {{ product_details.product_price }}</h4>
+                        {% endif %}
+                        {% if product_details.product_discount_price %}
+                        <div class="product_actual_price_strick"
+                            style="margin: 2px 20px; display: flex;align-items: center;justify-content: center;">
+                            <s>
+                            <h4 class="product_actual_price" style="margin: 2px;">{{ currency }} {{ product_details.product_price }}
+                            </h4></s>
+                        </div>
+                        {% else %}
+                        <h4 class="product_actual_price"></h4>
+                        {% endif %}
+                    </div>
+                    <!-- the above code css is in product_card.css -->
+
+
+                    <p class="product_discription"> {{ product_details.product_description }}</p>
+
+
+                </div>
+                <div class="product_page_sub_contianer_2_content_sub2">
+
+                    <div class="product_page_sub_contianer_2_content_sub2_1">
+                        <div class="counter-container">
+                            <button id="decrement">-</button>
+                            <div id="counter">1</div>
+                            <button id="increment">+</button>
+                        </div>
+
+
+
+                        {% if request.user.is_authenticated %}
+                        <button id="buynow" class="buynow">Buy Now</button>
+                        {% else %}
+                        <button class="login buynow">Buy Now</button>
+                        {% endif %}
+                        <script>
+                            document.getElementById("buynow").addEventListener("click", function () {
+                                const productName = encodeURIComponent("{{ product_details.product_name }}");
+                                const productId = "{{ product_details.id }}";
+                                const counterValue = document.getElementById('counter').textContent;
+
+                                const url = `{% url 'billing' %}?product_id=${productId}&quantity=${counterValue}`;
+                                window.location.href = url;
+                            });
+                        </script>
+
+
+
+                        {% if request.user.is_authenticated %}
+                        <form class="product_page_favor_marker" action="{% url 'store_favorite_product' %}"
+                            method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <input type="hidden" name="product_name" value="{{ product_details.product_name }}">
+                            <input type="hidden" name="product_id" value="{{ product_details.id }}">
+                            <button class="container"
+                                style="border: none; padding: 0; background-color: transparent; margin: 0; color: {% if product_details.id in is_favorite_products %} #FF5353 {% else %} black {% endif %};">
+                                &#10084;
+                            </button>
+
+                        </form>
+                        {% else %}
+                        <div class="product_page_favor_marker login" id="favormarker">
+                            <button class="container"
+                                style="color:#000000; border: none;padding: 0;background-color: transparent; margin: 0;">
+                                <i class="fa-regular fa-heart"></i>
+                            </button>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="product_page_sub_contianer_2_content_sub2_2">
+                        <div class="product_page_sub_contianer_2_content_sub2_2">
+                            <button id="add-to-cart" data-product-id="{{ product_details.id }}">
+                                {% if product_in_cart %}Remove from Cart{% else %}Add to Cart{% endif %}
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="product_page_sub_contianer_3">
+
+            {% if product_details.free_delivery %}
+            <div class="freedeliver_container">
+                <i class="fa-solid fa-truck"></i>
+                <h4>Free Delivery</h4>
+            </div>
+            {% endif %}
+
+            {% if product_details.return_delivery %}
+            <div class="return_container">
+                <i class="fa-solid fa-arrow-rotate-left"></i>
+                <div class="return_sub_container">
+                    <div>
+                        <h4>Return Delivery</h4>
+                    </div>
+                    <div>
+                        <h4 style=" font-size: 10px; font-weight: 500;">Free 30 Days Delivery Returns.</h4>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div></div>
+            {% endif %}
+
+        </div>
+        <div class="product_page_sub_contianer_3_5">
+
+            {% if request.user.is_authenticated %}
+
+            <div class="reviewButton_container">
+                <button id="reviewButton">review</button>
+            </div>
+
+            {% else %}
+
+            <div class="reviewButton_container login">
+                <button class="review">review</button>
+            </div>
+
+            {% endif %}
+
+
+            <!-- review_template.html -->
+            <form class="review_container" method="post" id="review_container" action="{% url 'review' %}">
+                {% csrf_token %}
+                <div class="review_profile_img_name_container">
+                    <div class="review_profile_img_container">
+                        {% if user_profile_image %}
+                        <img src="{{ user_profile_image }}" alt="Profile Image">
+                        {% else %}
+                        <i id="open_navbar" class="fa-regular fa-user"></i>
+                        {% endif %}
+                    </div>
+                    <h4>{{ username }}</h4>
+                </div>
+                <div class="review_input_container">
+                    <textarea name="review" id="review_text" cols="30" rows="10"></textarea>
+                </div>
+                <input type="hidden" name="product_name" value="{{ product_details.product_name }}">
+                <input type="hidden" name="product_id" value="{{ product_details.id }}">
+                <div class="rating">
+                    <input type="radio" id="star5" name="rate" value="5" />
+                    <label for="star5" title="text"></label>
+                    <input type="radio" id="star4" name="rate" value="4" />
+                    <label for="star4" title="text"></label>
+                    <input type="radio" id="star3" name="rate" value="3" />
+                    <label for="star3" title="text"></label>
+                    <input type="radio" id="star2" name="rate" value="2" />
+                    <label for="star2" title="text"></label>
+                    <input checked type="radio" id="star1" name="rate" value="1" />
+                    <label for="star1" title="text"></label>
+                </div>
+                <button type="submit">Submit</button>
+            </form>
+
+
+
+
+            {% for review in review_lists %}
+            <div class="review_list_container">
+                <div class="review_profile_img_name_container ">
+                    <div class="review_profile_img_container">
+                        {% if review.user.userprofile.profile_image %}
+                        <img src="{{ review.user.userprofile.profile_image.url }}" alt="Profile Image">
+                        {% else %}
+                        <i id="open_navbar" class="fa-regular fa-user"></i>
+                        {% endif %}
+                    </div>
+                    <h4 style="width: auto; margin-right: auto;">{{ review.user.username }}</h4>
+                    <div class="custom_rating">
+                        {% for i in "12345" %}
+                        {% if forloop.counter <= review.rating %} <label title="text" for="star{{ forloop.counter }}"
+                            style="color: #ffa723;float: right;cursor: pointer;font-size: 25px;">&#9733;</label>
+                            {% else %}
+                            <label title="text" for="star{{ forloop.counter }}"
+                                style="color: #ffa723;float: right;cursor: pointer;font-size: 25px;">&#9734;</label>
+                            {% endif %}
+                            {% endfor %}
+                    </div>
+                </div>
+                <p>
+                    {{ review.review_text }}
+                </p>
+            </div>
+            {% endfor %}
+
+
+
+
+
+        </div>
+        <div class="product_page_sub_contianer_4">
+            <div class="related_items">
+                <div class="related_items_line"></div>
+                <h3>Related items</h3>
+            </div>
+
+
+            {% include 'product_card.html' %}
+
+
+
+        </div>
+
+
+
+    </div>
+
+
+    <script>
+        document.getElementById("reviewButton").addEventListener("click", function () {
+            var reviewForm = document.getElementById("review_container");
+            if (reviewForm.style.display === "none" || reviewForm.style.display === "") {
+                reviewForm.style.display = "flex";
+            } else {
+                reviewForm.style.display = "none";
+            }
+        });
+
+    </script>
+
+    <script>
+        document.getElementById('review_container').addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            var form = event.target;
+            var formData = new FormData(form);
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', form.action, true);
+            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+
+            xhr.onload = function () {
+                if (xhr.status >= 200 && xhr.status < 400) {
+                    var response = JSON.parse(xhr.responseText);
+                    if (response.success) {
+                        alert('Review submitted successfully');
+                        form.reset();
+                        // Optionally update the page with the new review
+                    } else {
+                        alert('Error: ' + response.message);
+                    }
+                } else {
+                    alert('An error occurred. Please try again.');
+                }
+            };
+
+            xhr.onerror = function () {
+                alert('An error occurred. Please try again.');
+            };
+
+            xhr.send(formData);
+        });
+
+        // the below code is for nummber of product for purchasing
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const counter = document.getElementById('counter');
+            const decrementButton = document.getElementById('decrement');
+            const incrementButton = document.getElementById('increment');
+
+            decrementButton.addEventListener('click', () => {
+                let currentValue = parseInt(counter.textContent);
+                if (currentValue > 1) {
+                    counter.textContent = currentValue - 1;
+                }
+            });
+
+            incrementButton.addEventListener('click', () => {
+                let currentValue = parseInt(counter.textContent);
+                counter.textContent = currentValue + 1;
+            });
+        });
+
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const addToCartButton = document.getElementById('add-to-cart');
+
+            addToCartButton.addEventListener('click', () => {
+                const productId = addToCartButton.getAttribute('data-product-id');
+                const quantity = document.getElementById('counter').textContent;
+
+                fetch('{% url "toggle_cart_item" %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({ product_id: productId, quantity: quantity })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert(data.message);
+                            // Optionally, update the button state to reflect the change
+                            if (data.message.includes('added')) {
+                                addToCartButton.textContent = 'Remove from Cart';
+                            } else {
+                                addToCartButton.textContent = 'Add to Cart';
+                            }
+                        } else {
+                            alert(data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred. Please try again.');
+                    });
+            });
+        });
+
+    </script>
+
+
+
+    {% include 'footer.html' %}
+
+</body>
+
+</html>

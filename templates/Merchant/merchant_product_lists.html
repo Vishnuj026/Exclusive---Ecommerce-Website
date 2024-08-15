@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% include 'links.html' %}
+    <link rel="stylesheet" href="/static/css/merchant.css">
+    <title> {{ logo.name }} | Merchant</title>
+</head>
+
+<body>
+    {% include 'Merchant/merchant_header.html' %}
+
+
+    <div class="merchant_product_lists">
+
+
+
+        <h1 class="Inventory">Inventory</h1>
+
+
+            <div class="merchant_product_lists_container">
+
+
+                {% for product in model_name %}
+                <a href="{% url 'edit_product' product.id product.product_name %}" class="merchant_product_card"
+                    data-id="{{ product.id }}">
+                    <div class="merchant_product_card_img">
+                        {% if product.product_discount_percent %}
+                        <div class="product_offer_percent">-{{ product.product_discount_percent }}%</div>
+                        {% endif %}
+                        <img src="{{ product.product_image.url }}" alt="{{ product.product_name }}">
+                    </div>
+                    <div class="product_card_content" style="margin-top: 5px;">
+                        <h4 class="product_name">{{ product.product_name }}</h4>
+                        <div class="product_price_contianer" >
+                            {% if product.product_discount_price %}
+                            <h4 class="product_discount_price" style="color: #FFFFFF;">{{ product.product_discount_price }}</h4>
+                            {% else %}
+                            <h4 class="product_discount_price">{{ product.product_price }}</h4>
+                            {% endif %}
+                            {% if product.product_discount_price %}
+                            <div class="product_actual_price_strick">
+                                <hr>
+                                <h4 class="product_actual_price">{{ product.product_price }}</h4>
+                            </div>
+                            {% else %}
+                            <h4 class="product_actual_price"></h4>
+                            {% endif %}
+                        </div>
+                        <div class="product_rating">
+                            <div class="custom_rating">
+                                {% for i in "12345" %}
+                                {% if i|add:"-1" < product.product_rating %} <label title="text" for="star{{ i }}"
+                                    style="color: #ffa723;float: right;cursor: pointer;font-size: 20px;">&#9733;</label>
+                                    {% else %}
+                                    <label title="text" for="star{{ i }}"
+                                        style="color: #ffa723;float: right;cursor: pointer;font-size: 20px;">&#9734;</label>
+                                    {% endif %}
+                                    {% endfor %}
+                            </div>
+                            <h4>
+                                ( {{ product.review_count }} )
+                            </h4>
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+
+
+
+            </div>
+
+
+        </div>
+    </div>
+
+    {% include 'footer.html' %}
+
+</body>
+
+</html>

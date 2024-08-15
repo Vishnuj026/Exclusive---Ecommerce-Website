@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% include 'links.html' %}
+    <title>{{ logo.name }} | Order Details</title>
+    <link rel="stylesheet" href="/static/css/order-details.css">
+
+    <style>
+        .order-detail-card {
+            flex-direction: column;
+        }
+
+        td {
+            text-align: center;
+            padding: auto;
+        }
+        p{
+            margin: 10px 0; 
+        }
+    </style>
+</head>
+
+<body>
+    {% include 'header.html' %}
+
+    <div class="order-detail-container">
+        <h2>Order Details</h2>
+        <div class="order-detail-card" >
+            <p><strong>User:</strong> {{ order.user }}</p>
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Product Name</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in order.items %}
+                    <tr>
+                        <td><img src="{{ item.product_image }}" alt="{{ item.product_name }}"
+                                style="width:100px;height:100px;"></td>
+                        <td>{{ item.product_name }}</td>
+                        <td>{{ item.currency }} {{ item.price }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>{{ item.currency }} {{ item.subtotal }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <p> <strong> Status: </strong> {{ order.status }}</p>
+            <p> <strong> Payment Method:</strong> {{ order.payment_method }}</p>
+            <p><strong>Total Price:</strong> {{ order.total_price }}</p>
+        </div>
+    </div>
+
+    {% include 'footer.html' %}
+
+</body>
+
+</html>

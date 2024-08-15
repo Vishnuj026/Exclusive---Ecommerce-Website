@@ -1,0 +1,120 @@
+.Login_page_main_container {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    flex-direction: row;
+    width: 100%;
+    height: auto;
+    font-family: "Poppins";
+}
+
+.Login_page_sub_img_container {
+    width: 45%;
+    height: 90%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.Login_page_sub_img_container img {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    object-fit: contain;
+}
+
+.Login_page_sub_form_container {
+    width: 50%;
+    height: 90%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.Login_form {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    flex-direction: column;
+    width: 65%;
+}
+
+.Login_form h1,
+h5 {
+    margin: 5px;
+}
+
+
+.Login_form input {
+    border: none;
+    color: #000000;
+    outline: none;
+    border-bottom: 2px solid #000000;
+    background-color: transparent;
+    width: 100%;
+    font-size: 20px;
+    padding: 5px 0 5px 5px;
+    margin: 20px 0;
+}
+
+.Log_In_Forget_Password_container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    width: 100%;
+}
+
+.Log_In_Forget_Password_container button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #9600BE;
+    font-family: Inter;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 800;
+    border: none;
+    padding: 15px;
+    color: #FFFFFF;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 50%;
+}
+
+.Log_In_Forget_Password_container button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+
+.Log_In_Forget_Password_container a {
+    color: #9600BE;
+    font-weight: 800;
+}
+.Signup_page_sub_form_container a{
+    color: #9600BE;
+}
+
+@media screen and (max-width: 768px) {
+
+    .Login_page_sub_img_container {
+        display: none;
+    }
+
+    .Login_page_sub_form_container {
+        width: 100%;
+    }
+
+    .Login_form {
+        width: 90%;
+    }
+
+    .Login_form h1 {
+        font-size: 30px;
+        line-height: 30px;
+    }
+}

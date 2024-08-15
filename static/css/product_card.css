@@ -1,0 +1,246 @@
+.product_card_list_main_container {
+    width: 100%;
+    padding: 20px 0;
+    display: flex;
+    min-height: 50vh;
+    height: auto;
+    justify-content: center;
+}
+
+.product_card_list_sub_container {
+    width: 90%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+
+
+
+
+
+
+.product_card {
+    flex: 0 0 calc(20% - 20px);
+    margin: 20px 0;
+    text-decoration: none;
+    cursor: pointer;
+    color: #000000;
+    min-height: 250px;
+    height: 300px;
+}
+
+.product_card_img {
+    position: relative;
+    background-color: #F5F5F5;
+    border-radius: 5px;
+    height: 60%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.favor_marker {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #FFFFFF;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 99;
+}
+
+/* favour check box css */
+
+.container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+
+}
+
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    cursor: pointer;
+    font-size: 20px;
+    user-select: none;
+    transition: 100ms;
+}
+
+.checkmark {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 0.8em;
+    width: 0.8em;
+    transition: 100ms;
+    animation: dislike_effect 400ms ease;
+}
+
+
+
+.container input:checked~.checkmark path {
+    fill: #FFFFFF;
+    stroke-width: 5;
+    stroke: #000000;
+}
+
+
+
+.container input:checked~.checkmark {
+    animation: like_effect 400ms ease;
+}
+
+.container:hover {
+    transform: scale(1.1);
+}
+
+@keyframes like_effect {
+    0% {
+        transform: scale(0);
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes dislike_effect {
+    0% {
+        transform: scale(0);
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+
+
+.product_offer_percent {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 40px;
+    height: 20px;
+    border-radius: 5px;
+    background-color: #9600BE;
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+}
+
+.product_card_img img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.product_card_content {
+    height: 30%;
+}
+
+.product_card_content h4 {
+    margin: 2px 0;
+    font-family: Poppins;
+    font-weight: 500;
+    line-height: 20px;
+}
+
+.product_price_contianer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: start;
+}
+
+.product_price_contianer .product_discount_price {
+    color: #9600BE;
+}
+
+.product_actual_price_strick {
+    position: relative;
+    margin: 0 5%;
+    height: 100%;
+    width: auto;
+    background-color: transparent;
+}
+
+.product_actual_price_strick s {
+    color: gray;
+}
+
+.product_actual_price_strick .product_actual_price {
+    color: gray;
+}
+
+
+.product_rating {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+
+.product_rating h4 {
+    margin: 8px 0 0 5px;
+}
+
+.custom_rating {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+
+
+
+
+
+
+
+
+@media screen and (max-width: 768px) {
+    .product_card_list_sub_container {
+        width: 100%;
+    }
+
+    .product_card {
+        flex-basis: calc(30% - 20px);
+    }
+
+
+    .product_offer_percent {
+        width: 30px;
+        height: 15px;
+        font-size: 8px;
+    }
+
+
+}
+
+
+@media screen and (max-width: 526px) {
+    .product_card {
+        flex-basis: calc(50% - 20px);
+    }
+}

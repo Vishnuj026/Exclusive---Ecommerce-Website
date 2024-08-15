@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% include 'links.html' %}
+    <link rel="stylesheet" href="/static/css/merchant.css">
+    <title> {{ logo.name }} | Merchant</title>
+</head>
+
+<body>
+    {% include 'Merchant/merchant_header.html' %}
+
+    <div class="create_product_container">
+        <form method="post" action="{% url 'create product' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="merchant_name_img_container">
+
+                <div class="merchant_name_container">
+                    <h1>Welcome {{ request.user.username }}</h1>
+                    <h5>Start your selling journey on {{ logo.name }} and become a part of our 14 Lakh+ seller community
+                    </h5>
+                    <div class="category_subcategory_container">
+
+                        <div class="form-group category_container">
+                            <label for="{{ form.category.id_for_label }}">{{ form.category.label }}</label>
+                            <div class="custom-select-container">
+                                {{ form.category }}
+                            </div>
+                        </div>
+
+                        <div class="form-group subcategory_container">
+                            <label for="{{ form.sub_category.id_for_label }}">{{ form.sub_category.label }}</label>
+                            <div class="custom-select-container">
+                                {{ form.sub_category }}
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+                <div class="form-group product_image">
+                    <label for="{{ form.product_image.id_for_label }}" class="custom-file-upload">
+                        <div class="upload-container">
+                            <span class="plus-icon">+</span>
+                            <span class="upload-text">Drag or add your product</span>
+                            <img id="uploaded-image" class="uploaded-image" src="#" alt="Uploaded Image">
+                        </div>
+                    </label>
+                    {{ form.product_image }}
+                </div>
+            </div>
+
+            <div class="details-container">
+                <h2>Details</h2>
+                <div class="form-row">
+                    <div class="form-group form_group">
+                        <label for="{{ form.product_name.id_for_label }}">{{ form.product_name.label }}</label>
+                        {{ form.product_name }}
+                    </div>
+                    <div class="form-group form_group">
+                        <label for="{{ form.brand.id_for_label }}">{{ form.brand.label }}</label>
+                        {{ form.brand }}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group form_group">
+                        <label for="{{ form.product_price.id_for_label }}">{{ form.product_price.label }}</label>
+                        {{ form.product_price }}
+                    </div>
+                    <div class="form-group form_group">
+                        <label
+                            for="{{ form.product_discount_price.id_for_label }}">{{form.product_discount_price.label}}</label>
+                        {{ form.product_discount_price }}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group form_group" style="width: 100%;">
+                        <label
+                            for="{{ form.product_description.id_for_label }}">{{form.product_description.label}}</label>
+                        {{ form.product_description }}
+                    </div>
+                </div>
+
+            </div>
+
+            <input type="hidden" name="MerchantName" value="{{ request.user.username }}">
+
+            <div class="stock_delivery_container">
+                <div class="form-group groups">
+                    <label for="{{ form.currency.id_for_label }}">{{ form.currency.label }}</label>
+                    {{ form.currency }}
+                </div>
+
+                <div class="form-group groups">
+                    <label for="{{ form.in_stock.id_for_label }}">{{ form.in_stock.label }}</label>
+                    {{ form.in_stock }}
+                </div>
+
+                <div class="form-group groups">
+                    <label for="{{ form.free_delivery.id_for_label }}">{{ form.free_delivery.label }}</label>
+                    {{ form.free_delivery }}
+                </div>
+
+                <div class="form-group groups">
+                    <label for="{{ form.return_delivery.id_for_label }}">{{ form.return_delivery.label }}</label>
+                    {{ form.return_delivery }}
+                </div>
+            </div>
+
+            <button type="submit" class="uploadproduct">Upload the product</button>
+        </form>
+    </div>
+
+    {% include 'footer.html' %}
+
+    <script>
+        document.getElementById("{{ form.product_image.id_for_label }}").addEventListener("change", function () {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const uploadedImage = document.getElementById("uploaded-image");
+                    uploadedImage.src = e.target.result;
+                    uploadedImage.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+</body>
+
+</html>

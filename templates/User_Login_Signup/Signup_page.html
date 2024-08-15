@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% include 'links.html' %}
+    <title>Exclusive | Signup </title>
+    <link rel="stylesheet" href="/static/css/Signup_page.css">
+    <style>
+        body {
+            background-color: #FFFFFF;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header_signin_contianer, nav, .footer_signin_contianer {
+            display: none;
+        }
+
+    </style>
+</head>
+
+<body>
+    {% include 'header.html' %}
+
+    <div class="Signup_page_main_container">
+        <div class="Signup_page_sub_img_container">
+            <img src="/static/assets/Login_page/login.png" alt="">
+        </div>
+        <div class="Signup_page_sub_form_container">
+            <form action="{% url 'Signup page' %}" method="post" class="Signup_form" enctype="multipart/form-data">
+                {% csrf_token %}
+                <h1>Create an account</h1>
+                <h5>Enter your details below</h5>
+                
+                {{ form.non_field_errors }}
+
+                {{ form.username }}
+                {{ form.username.errors }}
+
+                
+                {{ form.email }}
+                {{ form.email.errors }}
+
+
+                {{ form.password1 }}
+                {{ form.password1.errors }}
+
+
+                {{ form.password2 }}
+                {{ form.password2.errors }}
+
+
+                <button class="Create_account" type="submit">Create Account</button>
+        
+            </form>
+            <h5>Already have an account? <a href="{% url 'Login page' %}">Log in</a></h5>
+        </div>
+    </div>
+
+    {% include 'footer.html' %}
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% include 'links.html' %}
+    <title>Exclusive | Login</title>
+    <link rel="stylesheet" href="/static/css/Login_page.css">
+    <style>
+        body {
+            background-color: #FFFFFF;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header_signin_contianer,
+        nav,
+        .footer_signin_contianer {
+            display: none;
+        }
+
+        .error {
+            color: red;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+
+<body>
+    {% include 'header.html' %}
+
+    <div class="Login_page_main_container">
+        <div class="Login_page_sub_img_container">
+            <img src="/static/assets/Login_page/login.png" alt="">
+        </div>
+        <div class="Login_page_sub_form_container">
+            <form class="Login_form" action="{% url 'Merchant Login page' %}" method="post"
+                enctype="multipart/form-data">
+                {% csrf_token %}
+                <h1>Log in to {{ Logo.name }}</h1>
+                <h5>Enter your details below</h5>
+
+                {{ form.non_field_errors }}
+
+                {{ form.username }}
+                {% if form.username.errors %}
+                <div class="error">{{ form.username.errors }}</div>
+                {% endif %}
+
+                {{ form.password }}
+                {% if form.password.errors %}
+                <div class="error">{{ form.password.errors }}</div>
+                {% endif %}
+
+                <div class="Log_In_Forget_Password_container">
+                    <button type="submit">Log In</button>
+                    <a href="">Forget Password?</a>
+                </div>
+            </form>
+            <h5>Don't have an account? <a href="{% url 'Merchant Signup page' %}">Create one</a></h5>
+        </div>
+    </div>
+
+    {% include 'footer.html' %}
+</body>
+
+</html>

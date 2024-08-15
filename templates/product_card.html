@@ -1,0 +1,74 @@
+<div class="product_card_list_main_container">
+
+
+    <div class="product_card_list_sub_container">
+
+
+        {% for product in model_name %}
+        <a href="{% url 'ProductPage' product.category product.product_name product.id %}" class="product_card"
+            data-id="{{ product.id }}">
+            <div class="product_card_img">
+                {% if product.product_discount_percent %}
+                <div class="product_offer_percent">-{{ product.product_discount_percent }}%</div>
+                {% endif %}
+                {% if request.user.is_authenticated %}
+                <form class="favor_marker" action="{% url 'store_favorite_product' %}" method="post"
+                    enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="hidden" name="product_name" value="{{ product.product_name }}">
+                    <input type="hidden" name="product_id" value="{{ product.id }}">
+                    <button class="container" style=" border: none;padding: 0;background-color: transparent; margin: 0; color: {% if product.id in is_favorite_products %} #FF5353 {% else %} black {% endif %}; ">
+                        &#10084;
+                    </button>
+                </form>
+
+                {% else %}
+                <div class="favor_marker login">
+                    <button class="container" style="color:#000000; border: none;padding: 0;background-color: transparent; margin: 0;">
+                        <i class="fa-regular fa-heart"></i>
+                    </button>
+                </div>
+                {% endif %}
+                <img src="{{ product.product_image.url }}" alt="{{ product.product_name }}">
+            </div>
+            <div class="product_card_content">
+                <h4 class="product_name">{{ product.product_name }}</h4>
+                <div class="product_price_contianer">
+                    {% if product.product_discount_price %}
+                    <h4 class="product_discount_price">{{ currency }} {{ product.product_discount_price }}</h4>
+                    {% else %}
+                    <h4 class="product_discount_price">{{ currency }} {{ product.product_price }}</h4>
+                    {% endif %}
+                    {% if product.product_discount_price %}
+                    <div class="product_actual_price_strick">
+                        <s>
+                        <h4 class="product_actual_price">{{ currency }} {{ product.product_price }}</h4></s>
+                    </div>
+                    {% else %}
+                    <h4 class="product_actual_price"></h4>
+                    {% endif %}
+                </div>
+                <div class="product_rating">
+                    <div class="custom_rating">
+                    {% for i in "12345" %}
+                        {% if i|add:"-1" < product.product_rating %}
+                           <label title="text" for="star{{ i }}" style="color: #ffa723;float: right;cursor: pointer;font-size: 20px;">&#9733;</label>
+                        {% else %}
+                           <label title="text" for="star{{ i }}" style="color: #ffa723;float: right;cursor: pointer;font-size: 20px;">&#9734;</label>
+                        {% endif %}
+                    {% endfor %}
+                    </div>
+                    <h4>
+                        ( {{ product.review_count }} )
+                    </h4>
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+
+
+
+    </div>
+
+
+</div>

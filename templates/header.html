@@ -1,0 +1,124 @@
+<div class="{% if request.user.is_authenticated %}hidden{% else %}header_signin_contianer{% endif %}">
+    <div>
+        <h4>To see personalized recommendations</h4>
+    </div>
+    <div>
+        <button onclick="window.location.href = '{% url 'Login page' %}'">Sign in</button>
+    </div>
+    <div>
+        <h4>New customer?</h4><a href="{% url 'Signup page' %}"> Start here. </a>
+    </div>
+</div>
+
+<header>
+    <div class="header_container">
+        <a href="{% url 'Home' %}">
+            <h1>{{ logo.name }}</h1>
+        </a>
+
+        {% if request.user.is_authenticated and is_merchant %}
+        <button class="glow-button" onclick="window.location.href = '{% url 'create product' %}';">Seller Product</button>
+        {% endif %}
+
+        <div class="header_container_1">
+            <form class="header_search_container" id="search_engine" action="{% url 'search' %}" method="get">
+                {{ SearchForm.query }}
+                <button type="submit">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+            </form>
+
+            {% if request.user.is_authenticated %}
+            <a href="{% url 'Favorate products' %}">
+                <i class="fa-regular fa-heart"></i>
+            </a>
+            {% else %}
+            <i class="fa-regular fa-heart login" style="cursor: pointer;"></i>
+            {% endif %}
+
+            {% if request.user.is_authenticated %}
+            <a href="{% url 'cart' %}">
+                <i class="fa-solid fa-cart-shopping" style="cursor: pointer;"></i>
+            </a>
+            {% else %}
+            <i class="fa-solid fa-cart-shopping login"></i>
+            {% endif %}
+            {% if request.user.is_authenticated %}
+            <div id="open_navbar" class="profile_img_container">
+                {% if user.userprofile.profile_image %}
+                <img src="{{ user.userprofile.profile_image.url }}" alt="">
+                {% else %}
+                <i class="fa-regular fa-user"></i>
+                {% endif %}
+            </div>
+            {% else %}
+            <i id="open_navbar" class="fa-regular fa-user"></i>
+            {% endif %}
+        </div>
+    </div>
+    <form class="header_mobile_search_container" id="search_engine" action="{% url 'search' %}" method="get">
+        {{ SearchForm.query }}
+        <button>
+            <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+    </form>
+</header>
+
+<nav>
+    <div class="navbar_container">
+        {% for category_details in category_list %}
+        <button {% if title_name == category_details.Category_title %} style="color: #FFFFFF; background-color: #000000;" {% endif %} onclick="window.location.href = '{% url 'CategoryPage' category=category_details.Category_title %}';">
+            {{ category_details.Category_title }}
+        </button>
+        {% endfor %}
+    </div>
+</nav>
+
+<nav class="popup_navbar" id="popup_navbar">
+    {% if request.user.is_authenticated %}
+    <a href="{% url 'My Account' %}"><i class="fa-regular fa-user"></i>&nbsp;My Account</a>
+    {% else %}
+    <a class="login" style="cursor: pointer;"><i class="fa-regular fa-user"></i>&nbsp;My Account</a>
+    {% endif %}
+
+    {% if request.user.is_authenticated %}
+    <a href="{% url 'My Order' %}"><i class="fa-solid fa-bag-shopping"></i>&nbsp;My Order</a>
+    {% else %}
+    <a class="login" style="cursor: pointer;"><i class="fa-solid fa-bag-shopping"></i>&nbsp;My Order</a>
+    {% endif %}
+
+    <div>
+        <a href="{% url 'Login page' %}"><i class="fa-solid fa-right-to-bracket"></i>&nbsp;Login&nbsp;</a>/<a href="{% url 'Signup page' %}">&nbsp;Signup&nbsp;</a>
+    </div>
+    <a href="{% url 'handleLogout' %}"><i class="fa-solid fa-right-from-bracket"></i>&nbsp;Logout</a>
+</nav>
+
+<script>
+    // Function to open the popup
+    function openPopup() {
+        var popup = document.getElementById("popup_navbar");
+        popup.style.display = "flex";
+    }
+
+    // Function to close the popup
+    function closePopup() {
+        var popup = document.getElementById("popup_navbar");
+        popup.style.display = "none";
+    }
+
+    // Event listener to open the popup when the div or icon is clicked
+    document.getElementById("open_navbar").addEventListener("click", function(event) {
+        event.preventDefault(); // Prevent the default behavior
+        openPopup(); // Call the function to open the popup
+    });
+
+    // Event listener to close the popup when clicked outside of it
+    window.addEventListener("click", function(event) {
+        var popup = document.getElementById("popup_navbar");
+        var openNavbarElement = document.getElementById("open_navbar");
+
+        if (event.target != popup && !popup.contains(event.target) && event.target != openNavbarElement && !openNavbarElement.contains(event.target)) {
+            closePopup(); // Call the function to close the popup
+        }
+    });
+</script>

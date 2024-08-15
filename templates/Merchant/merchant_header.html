@@ -1,0 +1,32 @@
+<header class="Merchant_header">
+    <div class="Merchant_header_sub_container">
+
+        <a href="{% url 'Home' %}">
+            <h1>
+                {{ logo.name }}
+            </h1>
+            {% if request.user.is_authenticated and is_merchant %}
+            <h5>
+                Seller
+            </h5>
+            {% endif %}
+
+        </a>
+
+        <button class="glow-button" onclick="window.location.href = '{% url 'Home'%}';">Buy Product</button>
+
+    </div>
+
+
+    <div class="Merchant_header_navbar">
+        <a href="{% url 'create product' %}">
+            <i class="fa-solid fa-plus"></i>
+        </a>
+        <a href="{% url 'Merchant Products Lists' %}">
+            <i class="fa-solid fa-boxes-stacked Merchant_inventory"></i>
+        </a>
+        <a href="{% url 'My Account' %}">
+            <i class="fa-regular fa-user Merchant_profile"></i>
+        </a>
+    </div>
+</header>
